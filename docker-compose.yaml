@@ -1,0 +1,91 @@
+#services:
+#  postgres:
+#    container_name: postgres_container
+#    image: postgres
+#    environment:
+#      POSTGRES_USER: user
+#      POSTGRES_PASSWORD: pass
+#      PGDATA: /data/postgres
+#    volumes:
+#      - postgres:/data/postgres
+#    ports:
+#      - "5432:5432"
+#    networks:
+#      - postgres
+#    restart: unless-stopped
+#  pgadmin:
+#    container_name: pgadmin_container
+#    image: dpage/pgadmin4
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+#      PGADMIN_CONFIG_SERVER_MODE: 'False'
+#    volumes:
+#      - postgres:/data/postgres
+#    ports:
+#      - "5050:80"
+#    networks:
+#      - postgres
+#    restart: unless-stopped
+#
+#networks:
+#  postgres:
+#    driver: bridge
+#
+#volumes:
+#  postgres:
+#  pgadmin:
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  jobapp:
+    container_name: jobapp_container
+    image: jobappimage  # Use the pre-built image name (replace with your image name)
+    ports:
+      - "8080:8080"  # Exposing port 8080 for Spring Boot
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_container:5432/postgres  # Connection to the PostgreSQL service
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+    networks:
+      - postgres
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
