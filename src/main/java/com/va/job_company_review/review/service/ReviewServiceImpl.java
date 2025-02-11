@@ -31,7 +31,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (company.isPresent()) {
             review.setCompany(company.get());
             return reviewRepository.save(review);
-        } else throw new IllegalArgumentException("Company not found");
+        } else throw new IllegalArgumentException("Company not found!");
     }
 
     @Override
